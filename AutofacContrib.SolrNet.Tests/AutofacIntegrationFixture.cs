@@ -3,14 +3,16 @@
 using System;
 using System.Collections.Generic;
 using Autofac;
-using MbUnit.Framework;
-using SolrNet;
 
-namespace AutofacContrib.SolrNet.Tests {
-    [TestFixture]
-    [Category("Integration")]
-    public class AutofacIntegrationFixture {
-        [Test]      
+using SolrNet;
+using SolrNet.Tests.Utils;
+using Xunit;
+
+namespace AutofacContrib.SolrNet.Tests
+{
+    public class AutofacIntegrationFixture
+    {
+        [Fact, Category("Integration")]
         public void Ping_And_Query()
         {
             var builder = new ContainerBuilder();
@@ -21,7 +23,7 @@ namespace AutofacContrib.SolrNet.Tests {
             Console.WriteLine(solr.Query(SolrQuery.All).Count);
         }
 
-        [Test]
+        [Fact, Category("Integration")]
         public void DictionaryDocument()
         {
             var builder = new ContainerBuilder();
@@ -29,16 +31,17 @@ namespace AutofacContrib.SolrNet.Tests {
             var container = builder.Build();
             var solr = container.Resolve<ISolrOperations<Dictionary<string, object>>>();
             var results = solr.Query(SolrQuery.All);
-            Assert.GreaterThan(results.Count, 0);
+            Assert.True(results.Count > 0);
+
             foreach (var d in results)
             {
-                Assert.GreaterThan(d.Count, 0);
+                Assert.True(d.Count > 0);
                 foreach (var kv in d)
                     Console.WriteLine("{0}: {1}", kv.Key, kv.Value);
             }
         }
 
-        [Test]
+        [Fact, Category("Integration")]
         public void DictionaryDocument_add()
         {
             var builder = new ContainerBuilder();

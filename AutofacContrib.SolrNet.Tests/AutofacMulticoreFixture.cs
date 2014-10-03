@@ -17,17 +17,17 @@
 using System.Configuration;
 using Autofac;
 using AutofacContrib.SolrNet.Config;
-using MbUnit.Framework;
+
 using SolrNet;
 using SolrNet.Impl;
 using System.Collections.Generic;
+using Xunit;
 
 namespace AutofacContrib.SolrNet.Tests
 {
-    [TestFixture]
     public class AutofacMulticoreFixture
     {
-        [Test]
+        [Fact]
         public void ResolveSolrOperations()
         {
             // Arrange 
@@ -47,10 +47,10 @@ namespace AutofacContrib.SolrNet.Tests
             var m = container.Resolve<ISolrOperations<Entity1>>();
 
             // Assert
-            Assert.IsTrue(m is SolrServer<Entity1>);
+            Assert.IsType<SolrServer<Entity1>>(m);
         }
 
-        [Test]
+        [Fact]
         public void ResolveSolrReadOnlyOperations()
         {
             // Arrange 
@@ -58,7 +58,7 @@ namespace AutofacContrib.SolrNet.Tests
             var cores = new SolrServers {
                                 new SolrServerElement {
                                         Id = "entity1",
-                                        DocumentType = typeof (Entity1).AssemblyQualifiedName,
+                                        DocumentType = typeof(Entity1).AssemblyQualifiedName,
                                         Url = "http://localhost:8983/solr/coreEntity1",
                                     },
                             };
@@ -70,10 +70,10 @@ namespace AutofacContrib.SolrNet.Tests
             var solrReadOnlyOperations = container.Resolve<ISolrReadOnlyOperations<Entity1>>();
 
             // Assert
-            Assert.IsTrue(solrReadOnlyOperations is SolrServer<Entity1>);
+            Assert.IsType<SolrServer<Entity1>>(solrReadOnlyOperations);
         }
 
-        [Test]
+        [Fact]
         public void ResolveSolrOperations_withMultiCore()
         {
             // Arrange 
@@ -99,11 +99,11 @@ namespace AutofacContrib.SolrNet.Tests
             var solrOperations2 = container.Resolve<ISolrOperations<Entity2>>();
 
             // Assert
-            Assert.IsTrue(solrOperations1 is SolrServer<Entity1>);
-            Assert.IsTrue(solrOperations2 is SolrServer<Entity2>);
+            Assert.IsType<SolrServer<Entity1>>(solrOperations1);
+            Assert.IsType<SolrServer<Entity2>>(solrOperations2);
         }
 
-        [Test]
+        [Fact]
         public void ResolveSolrOperations_viaNamedWithMultiCore()
         {
             // Arrange 
@@ -129,11 +129,11 @@ namespace AutofacContrib.SolrNet.Tests
             var solrOperations2 = container.ResolveNamed<ISolrOperations<Entity2>>("entity2");
 
             // Assert
-            Assert.IsTrue(solrOperations1 is SolrServer<Entity1>);
-            Assert.IsTrue(solrOperations2 is SolrServer<Entity2>);
+            Assert.IsType<SolrServer<Entity1>>(solrOperations1);
+            Assert.IsType<SolrServer<Entity2>>(solrOperations2);
         }
 
-        [Test]
+        [Fact]
         public void ResolveSolrOperations_viaNamedWithMultiCoreForDictionary()
         {
             // Arrange 
@@ -159,11 +159,11 @@ namespace AutofacContrib.SolrNet.Tests
             var solrOperations2 = container.ResolveNamed<ISolrOperations<Dictionary<string, object>>>("dictionary2");
 
             // Assert
-            Assert.IsTrue(solrOperations1 is SolrServer<Dictionary<string, object>>);
-            Assert.IsTrue(solrOperations2 is SolrServer<Dictionary<string, object>>);
+            Assert.IsType<SolrServer<Dictionary<string, object>>>(solrOperations1);
+            Assert.IsType<SolrServer<Dictionary<string, object>>>(solrOperations2);
         }
 
-        [Test]
+        [Fact]
         public void ResolveSolrReadOnlyOperations_viaNamedWithMultiCoreForDictionary()
         {
             // Arrange 
@@ -189,11 +189,11 @@ namespace AutofacContrib.SolrNet.Tests
             var solrReadOnlyOperations2 = container.ResolveNamed<ISolrReadOnlyOperations<Dictionary<string, object>>>("dictionary2");
 
             // Assert
-            Assert.IsTrue(solrReadOnlyOperations1 is SolrServer<Dictionary<string, object>>);
-            Assert.IsTrue(solrReadOnlyOperations2 is SolrServer<Dictionary<string, object>>);
+            Assert.IsType<SolrServer<Dictionary<string, object>>>(solrReadOnlyOperations1);
+            Assert.IsType<SolrServer<Dictionary<string, object>>>(solrReadOnlyOperations2);
         }
 
-        [Test]
+        [Fact]
         public void ResolveSolrOperations_fromConfigSection()
         {
             // Arrange 
@@ -208,7 +208,7 @@ namespace AutofacContrib.SolrNet.Tests
             var m = container.Resolve<ISolrOperations<Entity1>>();
 
             // Assert
-            Assert.IsTrue(m is SolrServer<Entity1>);
+            Assert.IsType<SolrServer<Entity1>>(m);
         }
     }
 

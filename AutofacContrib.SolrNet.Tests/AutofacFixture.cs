@@ -14,33 +14,35 @@
 // limitations under the License.
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
 using Autofac;
 using HttpWebAdapters;
-using MbUnit.Framework;
+
 using SolrNet;
 using SolrNet.Impl;
 using SolrNet.Tests.Mocks;
+using Xunit;
 using Mocks = SolrNet.Tests.Mocks;
 
-namespace AutofacContrib.SolrNet.Tests {
-    [TestFixture]
-    public class AutofacFixture {
-        [Test]
-        public void ReplaceMapper() {
+namespace AutofacContrib.SolrNet.Tests
+{
+    public class AutofacFixture
+    {
+        [Fact]
+        public void ReplaceMapper()
+        {
             var builder = new ContainerBuilder();
             var mapper = new MReadOnlyMappingManager();
-            builder.RegisterModule(new SolrNetModule("http://localhost:8983/solr") {Mapper = mapper});
+            builder.RegisterModule(new SolrNetModule("http://localhost:8983/solr") { Mapper = mapper });
             var container = builder.Build();
             var m = container.Resolve<IReadOnlyMappingManager>();
-            Assert.AreSame(mapper, m);
+            Assert.Same(mapper, m);
         }
 
-        [Test]
+        [Fact]
         public void ReplaceHttpWebRequestFactory()
         {
             var builder = new ContainerBuilder();
@@ -51,13 +53,16 @@ namespace AutofacContrib.SolrNet.Tests {
                 headers = () => new WebHeaderCollection {
                     {HttpResponseHeader.ETag, "123"},
                 },
-                getResponseStream = () => 
+                getResponseStream = () =>
                     // If we don't give back at least the basic XML, we get an XmlParseException
                     new MemoryStream(Encoding.UTF8.GetBytes("<?xml version=\"1.0\" encoding=\"UTF-8\"?><response />")),
             };
-            IHttpWebRequestFactory factory = new Mocks.HttpWebRequestFactory {
-                create = _ => new Mocks.HttpWebRequest {
-                    getResponse = () => {
+            IHttpWebRequestFactory factory = new Mocks.HttpWebRequestFactory
+            {
+                create = _ => new Mocks.HttpWebRequest
+                {
+                    getResponse = () =>
+                    {
                         getResponseCalls++;
                         return response;
                     },
@@ -68,61 +73,67 @@ namespace AutofacContrib.SolrNet.Tests {
             var container = builder.Build();
             var operations = container.Resolve<ISolrOperations<Dictionary<string, object>>>();
             var results = operations.Query(new SolrQuery("q:*"));
-            Assert.IsNotNull(results);
-            Assert.AreEqual(1, getResponseCalls);
+            Assert.NotNull(results);
+            Assert.Equal(1, getResponseCalls);
         }
 
-        [Test]
-        public void ResolveSolrOperations() {
+        [Fact]
+        public void ResolveSolrOperations()
+        {
             var builder = new ContainerBuilder();
             builder.RegisterModule(new SolrNetModule("http://localhost:8983/solr"));
             var container = builder.Build();
             var m = container.Resolve<ISolrOperations<Entity>>();
+            Assert.NotNull(m);
+            Assert.IsType<SolrServer<Entity>>(m);
         }
 
         /// <summary>
         /// Tests that resolving <see cref="ISolrBasicOperations{T}"/> and <see cref="ISolrBasicReadOnlyOperations{T}"/>
         /// resolve to the same instance.
         /// </summary>
-        [Test]
-        public void ResolveSolrBasicOperationsAndSolrBasicReadOnlyOperationsUseSameEntity() {
+        [Fact]
+        public void ResolveSolrBasicOperationsAndSolrBasicReadOnlyOperationsUseSameEntity()
+        {
             var builder = new ContainerBuilder();
             builder.RegisterModule(new SolrNetModule("http://localhost:8983/solr"));
             var container = builder.Build();
             var basic = container.Resolve<ISolrBasicOperations<Entity>>();
             var basicReadonly = container.Resolve<ISolrBasicReadOnlyOperations<Entity>>();
-            Assert.AreSame(basic, basicReadonly);
+            Assert.Same(basic, basicReadonly);
         }
-        
-        [Test]
+
+        [Fact]
         public void DictionaryDocument_Operations()
         {
             var builder = new ContainerBuilder();
             builder.RegisterModule(new SolrNetModule("http://localhost:8983/solr"));
             var container = builder.Build();
             var m = container.Resolve<ISolrOperations<Dictionary<string, object>>>();
+            Assert.NotNull(m);
+            Assert.IsType<SolrServer<Dictionary<string, object>>>(m);
         }
 
-        [Test]
+        [Fact]
         public void DictionaryDocument_ResponseParser()
         {
             var builder = new ContainerBuilder();
             builder.RegisterModule(new SolrNetModule("http://localhost:8983/solr"));
             var container = builder.Build();
             var parser = container.Resolve<ISolrDocumentResponseParser<Dictionary<string, object>>>();
-            Assert.IsInstanceOfType<SolrDictionaryDocumentResponseParser>(parser);
+            Assert.IsType<SolrDictionaryDocumentResponseParser>(parser);
         }
 
-        [Test]
+        [Fact]
         public void DictionaryDocument_Serializer()
         {
             var builder = new ContainerBuilder();
             builder.RegisterModule(new SolrNetModule("http://localhost:8983/solr"));
             var container = builder.Build();
             var serializer = container.Resolve<ISolrDocumentSerializer<Dictionary<string, object>>>();
-            Assert.IsInstanceOfType<SolrDictionarySerializer>(serializer);
+            Assert.IsType<SolrDictionarySerializer>(serializer);
         }
 
-        public class Entity {}
+        public class Entity { }
     }
 }
