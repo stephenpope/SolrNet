@@ -134,14 +134,14 @@ Target "NuGet.Windsor" <| fun _ ->
         "Castle.Facilities.SolrNetIntegration" 
         "SolrNet.Windsor"
         "Windsor facility for SolrNet"
-        ["Castle.Windsor", "3.2.0"; solrNetDep]
+        ["Castle.Windsor", "3.3.0"; solrNetDep]
 
 Target "NuGet.Ninject" <| fun _ ->
     nuGetSingle 
         "Ninject.Integration.SolrNet" 
         "SolrNet.Ninject"
         "Ninject module for SolrNet"
-        ["Ninject", "3.0.1.10"; solrNetDep]
+        ["Ninject", "3.2.2.0"; solrNetDep]
 
 Target "NuGet.NHibernate" <| fun _ ->
     nuGetSingle 
@@ -155,7 +155,7 @@ Target "NuGet.StructureMap" <| fun _ ->
         "StructureMap.SolrNetIntegration" 
         "SolrNet.StructureMap"
         "StructureMap registry for SolrNet"
-        ["structuremap", "[2.6.2.0]"; solrNetDep]
+        ["structuremap", "[2.6.4]"; solrNetDep]
 
 Target "NuGet.Autofac" <| fun _ ->
     nuGetSingle 
@@ -169,7 +169,7 @@ Target "NuGet.Unity" <| fun _ ->
         "Unity.SolrNetIntegration" 
         "SolrNet.Unity"
         "Unity integration for SolrNet"
-        ["Unity", "[2.1.505.0]"; solrNetDep]
+        ["Unity", "[3.5.1404.0]"; solrNetDep]
 
 Target "ReleasePackage" <| fun _ -> 
     let outputPath = "build"
@@ -250,7 +250,7 @@ Target "Test" DoNothing
 Target "TestAndNuGet" DoNothing
 
 "Test" <== ["BuildAll"] @ testTargets
-"BuildAll" <== ["Build";"Merge";"BuildSample"]
+"BuildAll" <== ["Build"]
 "BuildAndRelease" <== ["Clean";"Version";"BuildAll";"Docs";"ReleasePackage"]
 "TestAndRelease" <== ["Clean";"Version";"Test";"ReleasePackage"]
 "NuGet" <== ["Clean";"Build";"BasicMerge";"Docs"]
